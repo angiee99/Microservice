@@ -34,7 +34,7 @@ public class PcTypeController {
     }
 
     @PostMapping
-    public ResponseEntity<PcTypeResponseDto> addType(@Validated(ValidationGroups.OnCreate.class) @RequestBody PcTypeRequestDto type) {
+    public ResponseEntity<PcTypeResponseDto> addType(@Validated(ValidationGroups.OnCreateSequence.class) @RequestBody PcTypeRequestDto type) {
         PcTypeResponseDto saved = pcTypeService.save(type);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }

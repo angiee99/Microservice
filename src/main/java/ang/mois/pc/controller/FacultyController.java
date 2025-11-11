@@ -31,7 +31,7 @@ public class FacultyController {
     }
 
     @PostMapping
-    public ResponseEntity<FacultyResponseDto> addFaculty(@Validated(ValidationGroups.OnCreate.class) @RequestBody FacultyRequestDto facultyRequestDto) {
+    public ResponseEntity<FacultyResponseDto> addFaculty(@Validated(ValidationGroups.OnCreateSequence.class) @RequestBody FacultyRequestDto facultyRequestDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(facultyService.save(facultyRequestDto));
     }
 

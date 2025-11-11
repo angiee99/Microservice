@@ -97,7 +97,7 @@ class FacultyControllerTest {
         FacultyRequestDto invalidDto = new FacultyRequestDto(
                 "Faculty of Informatics",
                 "FI",
-                "inv@lid",
+                "inv@lid.",
                 Time.valueOf("08:00:00"),
                 Time.valueOf("20:00:00"),
                 5, 90, 180
@@ -143,14 +143,16 @@ class FacultyControllerTest {
                 "email@example.com",
                 Time.valueOf("8:00:00"),
                 Time.valueOf("20:00:00"),
-                -5, 90, 180
+                -5,
+                90,
+                180
         );
 
         mockMvc.perform(post(apiPath)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(invalidDto)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.reservationTimeStart").value("Reservation start time is mandatory"));
+                .andExpect(jsonPath("$.maxUserReservationCount").value("Reservation count must be zero or positive"));
 
         verify(facultyService, never()).save(any(FacultyRequestDto.class));
     }

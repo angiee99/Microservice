@@ -2,10 +2,7 @@ package ang.mois.pc.controller;
 
 import ang.mois.pc.dto.request.PcRequestDto;
 import ang.mois.pc.dto.response.PcResponseDto;
-import ang.mois.pc.dto.response.PcUnwrappedResponseDto;
-import ang.mois.pc.entity.Room;
 import ang.mois.pc.service.PcService;
-import ang.mois.pc.service.RoomService;
 import ang.mois.pc.validation.ValidationGroups;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,11 +15,9 @@ import java.util.List;
 @RequestMapping("/computer")
 public class PcController {
     private final PcService pcService;
-    private final RoomService roomService;
 
-    public PcController(PcService pcService, RoomService roomService) {
+    public PcController(PcService pcService) {
         this.pcService = pcService;
-        this.roomService = roomService;
     }
 
     @GetMapping
@@ -49,7 +44,7 @@ public class PcController {
     }
 
     @PostMapping
-    public ResponseEntity<PcResponseDto> addPc(@Validated(ValidationGroups.OnCreate.class) @RequestBody PcRequestDto pcRequestDto) {
+    public ResponseEntity<PcResponseDto> addPc(@Validated(ValidationGroups.OnCreateSequence.class) @RequestBody PcRequestDto pcRequestDto) {
         PcResponseDto saved = pcService.save(pcRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }

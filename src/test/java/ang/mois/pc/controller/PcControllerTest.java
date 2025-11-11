@@ -83,6 +83,24 @@ public class PcControllerTest {
     }
 
     @Test
+    void addInvalidPc_TooShortName() throws Exception {
+        PcRequestDto invalidDto = new PcRequestDto(
+                "a", // too short name
+                Boolean.TRUE,
+                1L,
+                1L
+        );
+
+        mockMvc.perform(post(apiPath)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidDto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.name").value("Name must be between 2 and 100 characters"));
+
+        verify(pcService, never()).save(any(PcRequestDto.class));
+    }
+
+    @Test
     void addInvalidPc_NullAvailability() throws Exception {
         PcRequestDto invalidDto = new PcRequestDto(
                 "Some Pc",
