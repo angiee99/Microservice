@@ -51,7 +51,7 @@ class PcTypeRepositoryTest {
     @Transactional
     void testCascadeSaveWithPcs() {
         // Create related Room
-        Faculty faculty = new Faculty("Faculty of IT", "FIT");
+        Faculty faculty = new Faculty("Faculty of IT", "FIT", "fit@specialdomain.com");
         Room room = new Room("R101", faculty);
         faculty.setRooms(List.of(room));
 

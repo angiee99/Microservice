@@ -1,6 +1,7 @@
 package ang.mois.pc.repository;
 
 import ang.mois.pc.entity.*;
+import ang.mois.pc.util.TestDataProvider;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -28,7 +29,7 @@ class PcRepositoryTest {
 
     @Test
     void testSaveAndFindById() {
-        Faculty faculty = facultyRepository.save(new Faculty("Faculty of IT", "FIT"));
+        Faculty faculty = facultyRepository.save(TestDataProvider.getFaculty("Faculty of IT", "FIT"));
         Room room = roomRepository.save(new Room("A101", faculty));
         PcType type = pcTypeRepository.save(new PcType("Office", "i5", "16GB", "GTX 1060"));
 
@@ -45,7 +46,7 @@ class PcRepositoryTest {
 
     @Test
     void testFindByRoom() {
-        Faculty faculty = facultyRepository.save(new Faculty("Faculty of Engineering", "FE"));
+        Faculty faculty = facultyRepository.save(TestDataProvider.getFaculty("Faculty of Engineering", "FE"));
         Room room1 = roomRepository.save(new Room("C201", faculty));
         Room room2 = roomRepository.save(new Room("C202", faculty));
         PcType type = pcTypeRepository.save(new PcType("Workstation", "i7", "32GB", "RTX 3070"));
@@ -62,7 +63,7 @@ class PcRepositoryTest {
 
     @Test
     void testFindAllByRoomIn() {
-        Faculty faculty = facultyRepository.save(new Faculty("Faculty of Design", "FD"));
+        Faculty faculty = facultyRepository.save(TestDataProvider.getFaculty("Faculty of Design", "FD"));
         Room r1 = roomRepository.save(new Room("D101", faculty));
         Room r2 = roomRepository.save(new Room("D102", faculty));
         Room r3 = roomRepository.save(new Room("D103", faculty));
@@ -80,7 +81,7 @@ class PcRepositoryTest {
     @Test
     @Transactional
     void testFindByPcType() {
-        Faculty faculty = facultyRepository.save(new Faculty("Faculty of Business", "FB"));
+        Faculty faculty = facultyRepository.save(TestDataProvider.getFaculty("Faculty of Business", "FB"));
         Room room = roomRepository.save(new Room("E101", faculty));
         PcType officeType = pcTypeRepository.save(new PcType("Office", "i5", "8GB", "Integrated"));
         PcType gamingType = pcTypeRepository.save(new PcType("Gaming", "Ryzen 7", "16GB", "RTX 2060"));

@@ -2,6 +2,7 @@ package ang.mois.pc.repository;
 
 import ang.mois.pc.entity.Faculty;
 import ang.mois.pc.entity.Room;
+import ang.mois.pc.util.TestDataProvider;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,12 +18,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 class FacultyRepositoryTest {
     @Autowired
     private FacultyRepository facultyRepository;
-    @Autowired
-    private RoomRepository roomRepository;
 
     @Test
     void testSaveAndFindById() {
-        Faculty faculty = getFaculty("Faculty of Science", "FS");
+        Faculty faculty = TestDataProvider.getFaculty("Faculty of Science", "FS");
         Faculty saved = facultyRepository.save(faculty);
 
         Optional<Faculty> found = facultyRepository.findById(saved.getId());
@@ -35,7 +34,7 @@ class FacultyRepositoryTest {
 
     @Test
     void testUpdateFaculty() {
-        Faculty faculty = getFaculty("Old Name", "Same");
+        Faculty faculty = TestDataProvider.getFaculty("Old Name", "Same");
         Faculty saved = facultyRepository.save(faculty);
 
         saved.setName("New Name");
@@ -48,7 +47,7 @@ class FacultyRepositoryTest {
 
     @Test
     void testDeleteFaculty() {
-        Faculty faculty = getFaculty("To Delete", "TD");
+        Faculty faculty = TestDataProvider.getFaculty("To Delete", "TD");
         Faculty saved = facultyRepository.save(faculty);
         assertThat(facultyRepository.findById(saved.getId())).isPresent();
 
@@ -61,7 +60,7 @@ class FacultyRepositoryTest {
     @Test
     @Transactional
     void testFacultyWithRooms() {
-        Faculty faculty = getFaculty("Faculty of IT", "FIT");
+        Faculty faculty = TestDataProvider.getFaculty("Faculty of IT", "FIT");
         Room room1 = new Room("R101", faculty);
         Room room2 = new Room("R102", faculty);
 
@@ -77,15 +76,12 @@ class FacultyRepositoryTest {
 
     @Test
     void testCreatedAtIsSet() {
-        Faculty faculty = getFaculty("Auto Date", "AD");
+        Faculty faculty = TestDataProvider.getFaculty("Auto Date", "AD");
         Faculty saved = facultyRepository.save(faculty);
 
         assertThat(saved.getCreatedAt()).isNotNull();
         assertThat(saved.getCreatedAt()).isBeforeOrEqualTo(LocalDateTime.now());
     }
 
-    Faculty getFaculty(String name, String shortcut) {
-        return new Faculty(name, shortcut);
-    }
 }
 

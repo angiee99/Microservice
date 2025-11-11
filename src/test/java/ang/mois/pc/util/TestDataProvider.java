@@ -8,6 +8,7 @@ import ang.mois.pc.dto.response.FacultyResponseDto;
 import ang.mois.pc.dto.response.PcResponseDto;
 import ang.mois.pc.dto.response.PcTypeResponseDto;
 import ang.mois.pc.dto.response.RoomResponseDto;
+import ang.mois.pc.entity.Faculty;
 
 import java.sql.Time;
 import java.time.LocalDateTime;
@@ -97,5 +98,9 @@ public class TestDataProvider {
                 "RTX 4090",
                 LocalDateTime.now()
         );
+    }
+
+    public static Faculty getFaculty(String name, String shortcut){
+        return new Faculty(name, shortcut, "dummy@fake.com");
     }
 }
