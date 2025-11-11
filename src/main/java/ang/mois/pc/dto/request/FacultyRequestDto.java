@@ -1,23 +1,26 @@
 package ang.mois.pc.dto.request;
 
 import ang.mois.pc.validation.ValidationGroups;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
+
 import java.sql.Time;
 
 public record FacultyRequestDto(
 
-        // Always validate: if 'name' is present, it must not be blank and have 2-100 chars.
-        @Size(min = 2, max = 100, message = "Name must be between 2 and 100 characters")
-        // Only on create: 'name' is mandatory and cannot be blank.
         @NotBlank(groups = ValidationGroups.OnCreate.class, message = "Name is mandatory")
+        @Size(min = 2, max = 100, message = "Name must be between 2 and 100 characters")
         String name,
 
-        @Size(min = 1, max = 10, message = "Shortcut must be between 1 and 10 characters")
+
         @NotBlank(groups = ValidationGroups.OnCreate.class, message = "Shortcut is mandatory")
+        @Size(min = 1, max = 10, message = "Shortcut must be between 1 and 10 characters")
         String shortcut,
+
+        @NotBlank(groups = ValidationGroups.OnCreate.class, message = "Email is mandatory")
+        // checks for a pattern that an email must follow
+        @Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$",
+                message = "Email must be a valid address")
+        String email,
 
         @NotNull(groups = ValidationGroups.OnCreate.class, message = "Reservation start time is mandatory")
         Time reservationTimeStart,
@@ -25,9 +28,7 @@ public record FacultyRequestDto(
         @NotNull(groups = ValidationGroups.OnCreate.class, message = "Reservation end time is mandatory")
         Time reservationTimeEnd,
 
-        // Always validate: if this number is provided, it must be 0 or more
         @Min(value = 0, message = "Reservation count must be zero or positive")
-        // Only on create: the field itself is mandatory
         @NotNull(groups = ValidationGroups.OnCreate.class, message = "Max user reservation count is mandatory")
         Integer maxUserReservationCount,
 

@@ -19,6 +19,7 @@ public class TestDataProvider {
         return new FacultyRequestDto(
                 "Faculty of Informatics",
                 "FI",
+                "email@example.com",
                 Time.valueOf("08:00:00"),
                 Time.valueOf("20:00:00"),
                 5,
@@ -32,6 +33,7 @@ public class TestDataProvider {
                 1L,
                 "Faculty of Informatics",
                 "FI",
+                "email@example.com",
                 Time.valueOf("08:00:00"),
                 Time.valueOf("20:00:00"),
                 5,

@@ -75,6 +75,7 @@ class FacultyControllerTest {
         FacultyRequestDto invalidDto = new FacultyRequestDto(
                 "", // Blank name
                 "FI",
+                "email@example.com",
                 Time.valueOf("08:00:00"),
                 Time.valueOf("20:00:00"),
                 5, 90, 180
@@ -91,14 +92,58 @@ class FacultyControllerTest {
     }
 
     @Test
+    void addInvalidFaculty_InvalidEmail() throws Exception {
+        // Create a DTO that violates an OnCreate rule
+        FacultyRequestDto invalidDto = new FacultyRequestDto(
+                "Faculty of Informatics",
+                "FI",
+                "inv@lid",
+                Time.valueOf("08:00:00"),
+                Time.valueOf("20:00:00"),
+                5, 90, 180
+        );
+
+        mockMvc.perform(post(apiPath)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidDto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.email").value("Email must be a valid address"));
+
+        // Verify service was never called
+        verify(facultyService, never()).save(any(FacultyRequestDto.class));
+    }
+
+    @Test
     void addInvalidFaculty_TimeIsNull() throws Exception {
         // Create a DTO that violates an OnCreate rule
         FacultyRequestDto invalidDto = new FacultyRequestDto(
                 "Faculty of Informatics",
                 "FI",
+                "email@example.com",
                 null, // Null start time
                 Time.valueOf("20:00:00"),
                 5, 90, 180
+        );
+
+        mockMvc.perform(post(apiPath)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidDto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.reservationTimeStart").value("Reservation start time is mandatory"));
+
+        verify(facultyService, never()).save(any(FacultyRequestDto.class));
+    }
+
+    @Test
+    void addInvalidFaculty_NegativeCount() throws Exception {
+        // Create a DTO that violates an OnCreate rule
+        FacultyRequestDto invalidDto = new FacultyRequestDto(
+                "Faculty of Informatics",
+                "FI",
+                "email@example.com",
+                Time.valueOf("8:00:00"),
+                Time.valueOf("20:00:00"),
+                -5, 90, 180
         );
 
         mockMvc.perform(post(apiPath)
@@ -118,6 +163,7 @@ class FacultyControllerTest {
                 "Updated Faculty Name",
                 null, // This is allowed on update
                 null, // This is allowed on update
+                null,
                 null,
                 null,
                 null,
@@ -143,6 +189,7 @@ class FacultyControllerTest {
                 null,
                 null,
                 null,
+                null,
                 null
         );
 
@@ -156,10 +203,33 @@ class FacultyControllerTest {
     }
 
     @Test
+    void updateFacultyInvalid_InvalidEmail() throws Exception {
+        FacultyRequestDto invalidPartialDto = new FacultyRequestDto(
+                null,
+                null,
+                "inv@lid",
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+
+        mockMvc.perform(put(apiPath.concat("/1"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidPartialDto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.email").value("Email must be a valid address"));
+
+        verify(facultyService, never()).update(anyLong(), any(FacultyRequestDto.class));
+    }
+
+    @Test
     void updateFacultyInvalid_ReservationCountIsNegative() throws Exception {
         // This DTO violates a Default rule (@Min(value=0))
         FacultyRequestDto invalidPartialDto = new FacultyRequestDto(
                 "A valid name",
+                null,
                 null,
                 null,
                 null,

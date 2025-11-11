@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.sql.Time;
 import java.time.LocalDate;
 
 @SpringBootTest
@@ -54,17 +53,18 @@ class FacultyServiceTest {
         // prepare dto
         FacultyRequestDto updateDto = new FacultyRequestDto("New Name",
                 null, null, null,
-                null, null, null);
+                null, null, null, null);
 
         FacultyResponseDto updated = facultyService.update(faculty.id(), updateDto);
         FacultyRequestDto mergedDto = new FacultyRequestDto(
                 "New Name",
-                "FI",
-                Time.valueOf("08:00:00"),
-                Time.valueOf("20:00:00"),
-                5,
-                90,
-                180
+                facultyRequestDto.shortcut(),
+                facultyRequestDto.email(),
+                facultyRequestDto.reservationTimeStart(),
+                facultyRequestDto.reservationTimeEnd(),
+                facultyRequestDto.maxUserReservationCount(),
+                facultyRequestDto.maxUserReservationTime(),
+                facultyRequestDto.maxUserReservationTimeWeekly()
         );
         verifyParams(updated, mergedDto);
     }
