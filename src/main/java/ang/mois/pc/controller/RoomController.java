@@ -39,7 +39,7 @@ public class RoomController {
     }
 
     @PostMapping
-    public ResponseEntity<RoomResponseDto> addRoom(@Validated(ValidationGroups.OnCreate.class) @RequestBody RoomRequestDto roomRequestDto) {
+    public ResponseEntity<RoomResponseDto> addRoom(@Validated(ValidationGroups.OnCreateSequence.class) @RequestBody RoomRequestDto roomRequestDto) {
         RoomResponseDto saved = roomService.save(roomRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }

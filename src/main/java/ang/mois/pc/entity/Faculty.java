@@ -15,6 +15,7 @@ public class Faculty {
     private Long id;
     private String name;
     private String shortcut;
+    private String email;
     private Time reservationTimeStart;
     private Time reservationTimeEnd;
     private Integer maxUserReservationCount; // of all time
@@ -26,9 +27,10 @@ public class Faculty {
     @JsonIgnore
     private List<Room> rooms;
 
-    public Faculty(String name, String shortcut) {
+    public Faculty(String name, String shortcut, String email) {
         this.name = name;
         this.shortcut = shortcut;
+        this.email = email;
         // default params
         this.createdAt = LocalDateTime.now();
         this.reservationTimeStart = Time.valueOf("08:00:00");
@@ -38,15 +40,16 @@ public class Faculty {
         this.maxUserReservationTimeWeekly = 900;
     }
 
-    public Faculty(LocalDateTime createdAt, int maxUserReservationTimeWeekly, int maxUserReservationTime, int maxUserReservationCount, Time reservationTimeEnd, Time reservationTimeStart, String shortcut, String name) {
-        this.createdAt = createdAt;
-        this.maxUserReservationTimeWeekly = maxUserReservationTimeWeekly;
-        this.maxUserReservationTime = maxUserReservationTime;
-        this.maxUserReservationCount = maxUserReservationCount;
-        this.reservationTimeEnd = reservationTimeEnd;
-        this.reservationTimeStart = reservationTimeStart;
-        this.shortcut = shortcut;
+    public Faculty(String name, String shortcut, String email, Time reservationTimeStart, Time reservationTimeEnd, Integer maxUserReservationCount, Integer maxUserReservationTime, Integer maxUserReservationTimeWeekly, LocalDateTime createdAt) {
         this.name = name;
+        this.shortcut = shortcut;
+        this.email = email;
+        this.reservationTimeStart = reservationTimeStart;
+        this.reservationTimeEnd = reservationTimeEnd;
+        this.maxUserReservationCount = maxUserReservationCount;
+        this.maxUserReservationTime = maxUserReservationTime;
+        this.maxUserReservationTimeWeekly = maxUserReservationTimeWeekly;
+        this.createdAt = createdAt;
     }
 
     public Faculty() {
@@ -74,6 +77,14 @@ public class Faculty {
 
     public void setShortcut(String shortcut) {
         this.shortcut = shortcut;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public LocalDateTime getCreatedAt() {

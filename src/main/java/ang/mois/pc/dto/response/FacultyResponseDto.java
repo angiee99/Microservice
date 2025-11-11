@@ -7,6 +7,7 @@ public record FacultyResponseDto(
          Long id,
          String name,
          String shortcut,
+         String email,
          Time reservationTimeStart,
          Time reservationTimeEnd,
          Integer maxUserReservationCount,

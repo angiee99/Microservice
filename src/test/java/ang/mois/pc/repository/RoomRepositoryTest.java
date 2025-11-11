@@ -1,6 +1,7 @@
 package ang.mois.pc.repository;
 
 import ang.mois.pc.entity.*;
+import ang.mois.pc.util.TestDataProvider;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -25,7 +26,7 @@ class RoomRepositoryTest {
 
     @Test
     void testSaveAndFindById() {
-        Faculty faculty = new Faculty("Faculty of Science", "FS");
+        Faculty faculty = TestDataProvider.getFaculty("Faculty of Science", "FS");
         facultyRepository.save(faculty);
 
         Room room = new Room("A101", faculty);
@@ -41,8 +42,8 @@ class RoomRepositoryTest {
 
     @Test
     void testFindByFaculty() {
-        Faculty f1 = new Faculty("Faculty of IT", "FIT");
-        Faculty f2 = new Faculty("Faculty of Law", "FLAW");
+        Faculty f1 = TestDataProvider.getFaculty("Faculty of IT", "FIT");
+        Faculty f2 = TestDataProvider.getFaculty("Faculty of Law", "FLAW");
         facultyRepository.saveAll(List.of(f1, f2));
 
         Room r1 = new Room("R101", f1);
@@ -62,7 +63,7 @@ class RoomRepositoryTest {
     @Test
     @Transactional
     void testCascadeSaveWithPcs() {
-        Faculty faculty = new Faculty("Faculty of Engineering", "FE");
+        Faculty faculty = TestDataProvider.getFaculty("Faculty of Engineering", "FE");
         facultyRepository.save(faculty);
 
         PcType pcType = new PcType("Office", "i5", "16GB", "GTX 1050");
@@ -85,4 +86,5 @@ class RoomRepositoryTest {
         assertThat(found.getPcs()).hasSize(2);
         assertThat(found.getPcs().getFirst().getRoom()).isEqualTo(found);
     }
+
 }
