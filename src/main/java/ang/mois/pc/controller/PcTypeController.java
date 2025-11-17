@@ -2,16 +2,15 @@ package ang.mois.pc.controller;
 
 import ang.mois.pc.dto.request.PcTypeRequestDto;
 import ang.mois.pc.dto.response.PcTypeResponseDto;
-import ang.mois.pc.entity.PcType;
 import ang.mois.pc.service.PcTypeService;
 import ang.mois.pc.validation.ValidationGroups;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/computerConfig")
@@ -24,8 +23,11 @@ public class PcTypeController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PcTypeResponseDto>> getAll() {
-        return ResponseEntity.ok(pcTypeService.getAll());
+    public ResponseEntity<Page<PcTypeResponseDto>> getAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "100") int size
+    ) {
+        return ResponseEntity.ok(pcTypeService.getAll(page, size));
     }
 
     @GetMapping("/{id}")

@@ -6,6 +6,9 @@ import ang.mois.pc.entity.PcType;
 import ang.mois.pc.mapper.PcTypeMapper;
 import ang.mois.pc.repository.PcRepository;
 import ang.mois.pc.repository.PcTypeRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,6 +27,12 @@ public class PcTypeService {
 
     public List<PcTypeResponseDto> getAll() {
         return pcTypeMapper.toResponseDtoList(pcTypeRepository.findAll());
+    }
+
+    public Page<PcTypeResponseDto> getAll(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<PcType> pcTypePage = pcTypeRepository.findAll(pageable);
+        return pcTypePage.map(pcTypeMapper::toResponseDto);
     }
 
     public PcTypeResponseDto getById(Long typeId) {
