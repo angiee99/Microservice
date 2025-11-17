@@ -8,6 +8,9 @@ import ang.mois.pc.mapper.RoomMapper;
 import ang.mois.pc.repository.FacultyRepository;
 import ang.mois.pc.repository.PcRepository;
 import ang.mois.pc.repository.RoomRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,6 +33,13 @@ public class RoomService {
         return roomMapper.toResponseDtoList(roomRepository.findAll());
     }
 
+    public Page<RoomResponseDto> getAll(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Room> roomPage = roomRepository.findAll(pageable);
+
+        return roomPage.map(roomMapper::toResponseDto);
+    }
+
     public RoomResponseDto getById(Long id) {
         Room room = getRoom(id);
         return roomMapper.toResponseDto(room);
@@ -37,6 +47,12 @@ public class RoomService {
 
     public List<RoomResponseDto> getByFaculty(Long facultyId) {
         return roomMapper.toResponseDtoList(roomRepository.findByFacultyId(facultyId));
+    }
+
+    public Page<RoomResponseDto> getByFaculty(Long facultyId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Room> roomPage = roomRepository.findByFacultyId(facultyId, pageable);
+        return roomPage.map(roomMapper::toResponseDto);
     }
 
     public RoomResponseDto save(RoomRequestDto createRoomRequestDto) {
