@@ -6,6 +6,9 @@ import ang.mois.pc.entity.Faculty;
 import ang.mois.pc.mapper.FacultyMapper;
 import ang.mois.pc.repository.FacultyRepository;
 import ang.mois.pc.repository.RoomRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,6 +32,13 @@ public class FacultyService {
 
     public List<FacultyResponseDto> getAll() {
         return facultyMapper.toResponseDtoList(facultyRepository.findAll());
+    }
+
+    public Page<FacultyResponseDto> getAll(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Faculty> facultyPage = facultyRepository.findAll(pageable);
+
+        return facultyPage.map(facultyMapper::toResponseDto);
     }
 
     public FacultyResponseDto save(FacultyRequestDto facultyRequestDto) {

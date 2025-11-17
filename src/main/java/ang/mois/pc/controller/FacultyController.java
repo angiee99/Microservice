@@ -4,12 +4,12 @@ import ang.mois.pc.dto.request.FacultyRequestDto;
 import ang.mois.pc.dto.response.FacultyResponseDto;
 import ang.mois.pc.service.FacultyService;
 import ang.mois.pc.validation.ValidationGroups;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/faculty")
@@ -21,8 +21,11 @@ public class FacultyController {
     }
 
     @GetMapping
-    public ResponseEntity<List<FacultyResponseDto>> getAll() {
-        return ResponseEntity.ok(facultyService.getAll());
+    public ResponseEntity<Page<FacultyResponseDto>> getAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "100") int size) {
+
+        return ResponseEntity.ok(facultyService.getAll(page, size));
     }
 
     @GetMapping("/{id}")
