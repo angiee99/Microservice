@@ -11,6 +11,9 @@ import ang.mois.pc.repository.PcRepository;
 import ang.mois.pc.repository.PcTypeRepository;
 import ang.mois.pc.repository.RoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,6 +36,22 @@ public class PcService {
 
     public List<PcResponseDto> getAll() {
         return pcMapper.toResponseDtoList(pcRepository.findAll());
+    }
+
+    public Page<PcResponseDto> getAll(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Pc> pcPage = pcRepository.findAll(pageable);
+
+        return pcPage.map(pcMapper::toResponseDto);
+    }
+
+    public List<PcResponseDto> getByRoom(Long roomId) {
+        return pcMapper.toResponseDtoList(pcRepository.findByRoomId(roomId));
+    }
+    public Page<PcResponseDto> getByRoom(Long roomId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Pc> pcPage = pcRepository.findByRoomId(roomId, pageable);
+        return pcPage.map(pcMapper::toResponseDto);
     }
 
     public PcResponseDto getById(Long id) {
@@ -96,10 +115,6 @@ public class PcService {
 
     public void delete(Long id) {
         pcRepository.deleteById(id);
-    }
-
-    public List<PcResponseDto> getByRoom(Long roomId) {
-        return pcMapper.toResponseDtoList(pcRepository.findByRoomId(roomId));
     }
 
     public List<PcResponseDto> getByType(PcType type) {
