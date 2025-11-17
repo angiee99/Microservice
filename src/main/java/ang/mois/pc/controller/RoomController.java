@@ -5,12 +5,11 @@ import ang.mois.pc.dto.response.RoomResponseDto;
 import ang.mois.pc.service.RoomService;
 import ang.mois.pc.validation.ValidationGroups;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/computerRoom")
@@ -24,13 +23,20 @@ public class RoomController {
     }
 
     @GetMapping
-    public ResponseEntity<List<RoomResponseDto>> getAll() {
-        return ResponseEntity.ok(roomService.getAll());
+    public ResponseEntity<Page<RoomResponseDto>> getAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "100") int size
+    ) {
+        return ResponseEntity.ok(roomService.getAll(page, size));
     }
 
     @GetMapping(params="facultyId")
-    public ResponseEntity<List<RoomResponseDto>> getAll(@RequestParam(name = "facultyId") Long facultyId) {
-        return ResponseEntity.ok(roomService.getByFaculty(facultyId));
+    public ResponseEntity<Page<RoomResponseDto>> getAll(
+            @RequestParam(name = "facultyId") Long facultyId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "100") int size
+    ) {
+        return ResponseEntity.ok(roomService.getByFaculty(facultyId, page, size));
     }
 
     @GetMapping("/{id}")
@@ -39,7 +45,8 @@ public class RoomController {
     }
 
     @PostMapping
-    public ResponseEntity<RoomResponseDto> addRoom(@Validated(ValidationGroups.OnCreateSequence.class) @RequestBody RoomRequestDto roomRequestDto) {
+    public ResponseEntity<RoomResponseDto> addRoom(
+            @Validated(ValidationGroups.OnCreateSequence.class) @RequestBody RoomRequestDto roomRequestDto) {
         RoomResponseDto saved = roomService.save(roomRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
@@ -51,7 +58,9 @@ public class RoomController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<RoomResponseDto> updateRoom(@PathVariable Long id, @Validated @RequestBody RoomRequestDto roomRequestDto) {
+    public ResponseEntity<RoomResponseDto> updateRoom(
+            @PathVariable Long id,
+            @Validated @RequestBody RoomRequestDto roomRequestDto) {
         RoomResponseDto updated = roomService.update(id, roomRequestDto);
         return ResponseEntity.ok(updated);
     }
