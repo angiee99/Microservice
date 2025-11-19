@@ -83,6 +83,11 @@ public class RoomService {
     public RoomResponseDto update(Long idR, RoomRequestDto roomRequestDto) {
         Room room = getRoom(idR);
 
+        if(roomRequestDto.facultyId() != null) {
+            Faculty faculty = getFaculty(roomRequestDto.facultyId());
+            room.setFaculty(faculty);
+        }
+
         // map by copying non null values from the update dto
         roomMapper.updateEntityFromDto(roomRequestDto, room);
 

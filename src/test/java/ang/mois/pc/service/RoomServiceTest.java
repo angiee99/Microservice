@@ -1,5 +1,6 @@
 package ang.mois.pc.service;
 
+import ang.mois.pc.dto.request.FacultyRequestDto;
 import ang.mois.pc.util.TestDataProvider;
 import ang.mois.pc.dto.request.RoomRequestDto;
 import ang.mois.pc.dto.response.FacultyResponseDto;
@@ -56,17 +57,19 @@ class RoomServiceTest {
     @Test
     void update() {
         RoomResponseDto saved = roomService.save(validDto);
+        FacultyRequestDto faculty = TestDataProvider.getFacultyRequestDto();
+        FacultyResponseDto newFaculty = facultyService.save(faculty);
 
         RoomRequestDto updateDto = new RoomRequestDto(
                 "Updated Room",
-                null
+                newFaculty.id()
         );
 
         RoomResponseDto updated = roomService.update(saved.id(), updateDto);
 
         RoomRequestDto expected = new RoomRequestDto(
                 "Updated Room",
-                faculty.id()
+                newFaculty.id()
         );
         verifyParams(updated, expected);
     }
