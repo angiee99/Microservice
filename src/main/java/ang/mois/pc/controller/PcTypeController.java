@@ -6,6 +6,7 @@ import ang.mois.pc.service.PcTypeService;
 import ang.mois.pc.validation.ValidationGroups;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -23,11 +24,8 @@ public class PcTypeController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<PcTypeResponseDto>> getAll(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "100") int size
-    ) {
-        return ResponseEntity.ok(pcTypeService.getAll(page, size));
+    public ResponseEntity<Page<PcTypeResponseDto>> getAll(Pageable pageable) {
+        return ResponseEntity.ok(pcTypeService.getAll(pageable));
     }
 
     @GetMapping("/{id}")

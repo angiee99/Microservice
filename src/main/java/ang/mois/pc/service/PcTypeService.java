@@ -29,8 +29,7 @@ public class PcTypeService {
         return pcTypeMapper.toResponseDtoList(pcTypeRepository.findAll());
     }
 
-    public Page<PcTypeResponseDto> getAll(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
+    public Page<PcTypeResponseDto> getAll(Pageable pageable) {
         Page<PcType> pcTypePage = pcTypeRepository.findAll(pageable);
         return pcTypePage.map(pcTypeMapper::toResponseDto);
     }

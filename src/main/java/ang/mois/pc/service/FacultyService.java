@@ -34,10 +34,8 @@ public class FacultyService {
         return facultyMapper.toResponseDtoList(facultyRepository.findAll());
     }
 
-    public Page<FacultyResponseDto> getAll(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
+    public Page<FacultyResponseDto> getAll(Pageable pageable) {
         Page<Faculty> facultyPage = facultyRepository.findAll(pageable);
-
         return facultyPage.map(facultyMapper::toResponseDto);
     }
 

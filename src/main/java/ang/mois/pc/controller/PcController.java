@@ -5,6 +5,7 @@ import ang.mois.pc.dto.response.PcResponseDto;
 import ang.mois.pc.service.PcService;
 import ang.mois.pc.validation.ValidationGroups;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -22,20 +23,16 @@ public class PcController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<PcResponseDto>> getAll(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "100") int size
-    ) {
-        return ResponseEntity.ok(pcService.getAll(page, size));
+    public ResponseEntity<Page<PcResponseDto>> getAll(Pageable pageable) {
+        return ResponseEntity.ok(pcService.getAll(pageable));
     }
 
     @GetMapping(params="computerRoomId")
     public ResponseEntity<Page<PcResponseDto>> getByRoom(
             @RequestParam(name="computerRoomId") Long computerRoomId,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "100") int size
-            ) {
-        return ResponseEntity.ok(pcService.getByRoom(computerRoomId, page, size));
+            Pageable pageable
+    ) {
+        return ResponseEntity.ok(pcService.getByRoom(computerRoomId, pageable));
     }
 
     @GetMapping("/{id}")
