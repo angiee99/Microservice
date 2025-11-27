@@ -38,18 +38,16 @@ public class PcService {
         return pcMapper.toResponseDtoList(pcRepository.findAll());
     }
 
-    public Page<PcResponseDto> getAll(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
+    public Page<PcResponseDto> getAll(Pageable pageable) {
         Page<Pc> pcPage = pcRepository.findAll(pageable);
-
         return pcPage.map(pcMapper::toResponseDto);
     }
 
     public List<PcResponseDto> getByRoom(Long roomId) {
         return pcMapper.toResponseDtoList(pcRepository.findByRoomId(roomId));
     }
-    public Page<PcResponseDto> getByRoom(Long roomId, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
+
+    public Page<PcResponseDto> getByRoom(Long roomId, Pageable pageable) {
         Page<Pc> pcPage = pcRepository.findByRoomId(roomId, pageable);
         return pcPage.map(pcMapper::toResponseDto);
     }

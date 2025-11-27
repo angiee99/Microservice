@@ -6,6 +6,7 @@ import ang.mois.pc.service.RoomService;
 import ang.mois.pc.validation.ValidationGroups;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -23,20 +24,16 @@ public class RoomController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<RoomResponseDto>> getAll(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "100") int size
-    ) {
-        return ResponseEntity.ok(roomService.getAll(page, size));
+    public ResponseEntity<Page<RoomResponseDto>> getAll(Pageable pageable) {
+        return ResponseEntity.ok(roomService.getAll(pageable));
     }
 
     @GetMapping(params="facultyId")
     public ResponseEntity<Page<RoomResponseDto>> getAll(
             @RequestParam(name = "facultyId") Long facultyId,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "100") int size
+            Pageable pageable
     ) {
-        return ResponseEntity.ok(roomService.getByFaculty(facultyId, page, size));
+        return ResponseEntity.ok(roomService.getByFaculty(facultyId, pageable));
     }
 
     @GetMapping("/{id}")

@@ -33,10 +33,8 @@ public class RoomService {
         return roomMapper.toResponseDtoList(roomRepository.findAll());
     }
 
-    public Page<RoomResponseDto> getAll(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
+    public Page<RoomResponseDto> getAll(Pageable pageable) {
         Page<Room> roomPage = roomRepository.findAll(pageable);
-
         return roomPage.map(roomMapper::toResponseDto);
     }
 
@@ -49,8 +47,7 @@ public class RoomService {
         return roomMapper.toResponseDtoList(roomRepository.findByFacultyId(facultyId));
     }
 
-    public Page<RoomResponseDto> getByFaculty(Long facultyId, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
+    public Page<RoomResponseDto> getByFaculty(Long facultyId, Pageable pageable) {
         Page<Room> roomPage = roomRepository.findByFacultyId(facultyId, pageable);
         return roomPage.map(roomMapper::toResponseDto);
     }
