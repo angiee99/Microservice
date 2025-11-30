@@ -6,7 +6,7 @@ public record PcUnwrappedResponseDto(
         Long id,
         String name,
         boolean available,
-        RoomResponseDto computerRoom,
+        RoomUnwrapedResponseDto computerRoom,
         PcTypeResponseDto computerConfig,
         LocalDateTime createdAt
 ) {
