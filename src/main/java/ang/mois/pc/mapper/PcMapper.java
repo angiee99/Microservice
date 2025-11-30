@@ -27,7 +27,9 @@ public interface PcMapper {
 
     // Response: Entity - Response Unwrapped Dto
     @Mapping(target = "computerRoom", source = "room")
-    @Mapping(target = "computerRoom.facultyId", source = "room.faculty.id")
+    @Mapping(target = "computerRoom.faculty.facultyId", source = "room.faculty.id")
+    @Mapping(target = "computerRoom.faculty.name", source = "room.faculty.name")
+    @Mapping(target = "computerRoom.faculty.shortcut", source = "room.faculty.shortcut")
     @Mapping(target = "computerConfig", source = "pcType")
     PcUnwrappedResponseDto toUnwrappedResponseDto(Pc entity);
 
