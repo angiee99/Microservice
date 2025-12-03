@@ -1,5 +1,6 @@
 package ang.mois.pc.controller.exception;
 
+import ang.mois.pc.service.FKConflictException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -39,6 +40,11 @@ public class GlobalExceptionHandler {
                 "message", ex.getMessage(),
                 "path", request.getDescription(false).replace("uri=", "")
         ));
+    }
+
+    @ExceptionHandler(FKConflictException.class)
+    public ResponseEntity<?> handleDeleteBlocked(FKConflictException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
 
     @ExceptionHandler(Exception.class)

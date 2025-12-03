@@ -1,5 +1,6 @@
 package ang.mois.pc.service;
 
+import ang.mois.pc.client.ReservationsClient;
 import ang.mois.pc.dto.request.PcRequestDto;
 import ang.mois.pc.dto.response.PcResponseDto;
 import ang.mois.pc.dto.response.PcUnwrappedResponseDto;
@@ -12,7 +13,6 @@ import ang.mois.pc.repository.PcTypeRepository;
 import ang.mois.pc.repository.RoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -25,13 +25,15 @@ public class PcService {
     private final RoomRepository roomRepository;
     private final PcTypeRepository pcTypeRepository;
     private final PcMapper pcMapper;
+    private final ReservationsClient reservationsClient;
 
     @Autowired
-    public PcService(PcRepository pcRepository, RoomRepository roomRepository, PcTypeRepository pcTypeRepository, PcMapper pcMapper) {
+    public PcService(PcRepository pcRepository, RoomRepository roomRepository, PcTypeRepository pcTypeRepository, PcMapper pcMapper, ReservationsClient reservationsClient) {
         this.pcRepository = pcRepository;
         this.roomRepository = roomRepository;
         this.pcTypeRepository = pcTypeRepository;
         this.pcMapper = pcMapper;
+        this.reservationsClient = reservationsClient;
     }
 
     public List<PcResponseDto> getAll() {
@@ -112,6 +114,15 @@ public class PcService {
     }
 
     public void delete(Long id) {
+        Pc pc = getPc(id);
+        // Check reservations via gateway
+        boolean hasReservations = reservationsClient.hasReservationsForPc(pc.getId());
+
+        if (hasReservations) {
+            throw new FKConflictException(
+                    "Cannot delete PC " + id + " – it has existing reservations."
+            );
+        }
         pcRepository.deleteById(id);
     }
 
