@@ -10,8 +10,11 @@ import ang.mois.pc.service.RoomService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -176,24 +179,26 @@ public class PcControllerTest {
     /* GET /computer tests */
     @Test
     void getAllPcs() throws Exception {
-        when(pcService.getAll()).thenReturn(List.of(pcResponseDto));
+        when(pcService.getAll(any(Pageable.class))).thenReturn(Page.empty());
 
-        mockMvc.perform(get(apiPath))
-                .andExpect(status().isOk());
+        mockMvc.perform(get(apiPath)).andExpect(status().isOk());
 
-        verify(pcService, times(1)).getAll();
+        ArgumentCaptor<Pageable> captor = ArgumentCaptor.forClass(Pageable.class);
+        verify(pcService).getAll(captor.capture());
     }
 
     /* GET /computer?computerRoomId= tests */
     @Test
     void getPcsByRoom() throws Exception {
-        when(pcService.getByRoom(roomResponseDto.id())).thenReturn(List.of(pcResponseDto));
+        when(pcService.getByRoom(eq(roomResponseDto.id()), any(Pageable.class))).thenReturn(Page.empty());
 
         mockMvc.perform(get(apiPath).param("computerRoomId", "1"))
                 .andExpect(status().isOk());
 
-        verify(pcService, times(1)).getByRoom(roomResponseDto.id());
+        ArgumentCaptor<Pageable> captor = ArgumentCaptor.forClass(Pageable.class);
+        verify(pcService).getByRoom(eq(roomResponseDto.id()), captor.capture());
     }
+
 
     /* GET /computer/{id} tests */
     @Test
