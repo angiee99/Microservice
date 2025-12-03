@@ -9,7 +9,7 @@ import org.springframework.data.web.config.PageableHandlerMethodArgumentResolver
 @Configuration
 public class GlobalPageableConfig {
     private static final int DEFAULT_PAGE_NUMBER = 0;
-    private static final int DEFAULT_PAGE_SIZE = 100;
+    private static final int DEFAULT_PAGE_SIZE = 1000;
     private static final String DEFAULT_SORT_BY = "id";
 
     @Bean
