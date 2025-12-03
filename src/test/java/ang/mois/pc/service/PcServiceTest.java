@@ -1,5 +1,6 @@
 package ang.mois.pc.service;
 
+import ang.mois.pc.client.ReservationsClient;
 import ang.mois.pc.dto.request.PcRequestDto;
 import ang.mois.pc.dto.response.PcResponseDto;
 import ang.mois.pc.entity.Faculty;
@@ -11,13 +12,17 @@ import ang.mois.pc.repository.RoomRepository;
 import ang.mois.pc.repository.PcTypeRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @Transactional
@@ -37,6 +42,9 @@ class PcServiceTest {
 
     @Autowired
     private PcRepository pcRepository;
+
+    @MockitoBean
+    private ReservationsClient reservationsClient;
 
     private PcRequestDto validDto;
     private Room savedRoom;
@@ -160,11 +168,34 @@ class PcServiceTest {
     }
 
     @Test
-    void delete() {
+    void deleteHappyDay() {
+        // pc exists
         PcResponseDto pc = pcService.save(validDto);
+        // gateway says there are NO reservations
+        when(reservationsClient.hasReservationsForPc(pc.id())).thenReturn(false);
+
+        // delete
         pcService.delete(pc.id());
 
         assertFalse(pcRepository.findById(pc.id()).isPresent());
+    }
+
+    @Test
+    void deleteReservationExists() {
+        // pc exists
+        PcResponseDto pc = pcService.save(validDto);
+        // gateway says reservations exist
+        when(reservationsClient.hasReservationsForPc(pc.id())).thenReturn(true);
+
+        // try to delete it, the exception must be thrown though
+        assertThrows(FKConflictException.class, () -> pcService.delete(pc.id()));
+
+        assertTrue(pcRepository.findById(pc.id()).isPresent());
+    }
+
+    @Test
+    void deletePcDoesNotExist() {
+        assertThrows(IllegalArgumentException.class, () -> pcService.delete(192390820L));
     }
 
     @Test
