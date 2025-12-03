@@ -11,7 +11,7 @@ public class ReservationsClient {
 
     private final RestTemplate restTemplate;
 
-    @Value("${app.gateway.url}")
+    @Value("${app.reservations.url}")
     private String gatewayBaseUrl;
 
     public ReservationsClient(RestTemplate restTemplate) {
