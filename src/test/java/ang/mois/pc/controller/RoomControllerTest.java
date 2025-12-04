@@ -10,8 +10,11 @@ import ang.mois.pc.service.RoomService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -129,26 +132,31 @@ public class RoomControllerTest {
         verify(roomService, never()).update(eq(1L), any(RoomRequestDto.class));
     }
 
-    /* GET /computerRoom and /computerRoom?facultyId= tests */
+    /* GET /computerRoom test */
     @Test
     void getAllRooms() throws Exception {
-        when(roomService.getAll()).thenReturn(List.of(roomResponseDto));
+        when(roomService.getAll(any(Pageable.class))).thenReturn(Page.empty());
 
         mockMvc.perform(get(apiPath))
                 .andExpect(status().isOk());
 
-        verify(roomService, times(1)).getAll();
+        ArgumentCaptor<Pageable> captor = ArgumentCaptor.forClass(Pageable.class);
+        verify(roomService).getAll(captor.capture());
     }
 
+    /* GET /computerRoom?facultyId= test */
     @Test
     void getRoomsByFaculty() throws Exception {
-        when(roomService.getByFaculty(facultyResponseDto.id())).thenReturn(List.of(roomResponseDto));
+        when(roomService.getByFaculty(eq(facultyResponseDto.id()), any(Pageable.class)))
+                .thenReturn(Page.empty());
 
         mockMvc.perform(get(apiPath).param("facultyId", "1"))
                 .andExpect(status().isOk());
 
-        verify(roomService, times(1)).getByFaculty(facultyResponseDto.id());
+        ArgumentCaptor<Pageable> captor = ArgumentCaptor.forClass(Pageable.class);
+        verify(roomService).getByFaculty(eq(facultyResponseDto.id()), captor.capture());
     }
+
 
     /* DELETE /computerRoom/{id} */
     @Test

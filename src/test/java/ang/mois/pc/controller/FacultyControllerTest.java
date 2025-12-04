@@ -8,8 +8,11 @@ import ang.mois.pc.service.FacultyService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -252,12 +255,13 @@ class FacultyControllerTest {
     // GET /faculty tests
     @Test
     void getAllFaculties() throws Exception {
-        when(facultyService.getAll()).thenReturn(List.of(responseDto));
+        when(facultyService.getAll(any(Pageable.class))).thenReturn(Page.empty());
 
         mockMvc.perform(get(apiPath))
                 .andExpect(status().isOk());
 
-        verify(facultyService, times(1)).getAll();
+        ArgumentCaptor<Pageable> captor = ArgumentCaptor.forClass(Pageable.class);
+        verify(facultyService).getAll(captor.capture());
     }
 
     @Test
