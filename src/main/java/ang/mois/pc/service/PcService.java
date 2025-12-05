@@ -120,7 +120,7 @@ public class PcService {
 
         if (hasReservations) {
             throw new FKConflictException(
-                    "Cannot delete PC " + id + " – it has existing reservations."
+                    "Cannot delete PC " + id + " as there are active reservations for this pc."
             );
         }
         pcRepository.deleteById(id);
