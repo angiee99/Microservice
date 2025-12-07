@@ -7,7 +7,6 @@ import ang.mois.pc.mapper.PcTypeMapper;
 import ang.mois.pc.repository.PcRepository;
 import ang.mois.pc.repository.PcTypeRepository;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -47,13 +46,13 @@ public class PcTypeService {
     public void delete(Long typeId) {
         // check if type exists
         if(!pcTypeRepository.existsById(typeId)) {
-            throw new IllegalArgumentException("PcType with id " + typeId + " does not exist");
+            throw new IllegalArgumentException("Configuration with id " + typeId + " does not exist");
         }
 
         // delete if no computer references this type?
         if(pcRepository.existsByPcTypeId(typeId)) {
             throw new FKConflictException(
-                    "Cannot delete PcType with id: " + " , because there are still computers associated with it."
+                    "Cannot delete configuration with id: " + typeId +" , because there are still computers associated with it."
             );
         }
         pcTypeRepository.deleteById(typeId);
@@ -70,6 +69,6 @@ public class PcTypeService {
 
     private PcType getPcType(Long id) {
         return pcTypeRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("PcType with id " + id + " does not exist"));
+                .orElseThrow(() -> new IllegalArgumentException("Configuration with id " + id + " does not exist"));
     }
 }
