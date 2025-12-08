@@ -6,6 +6,9 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * PcType DB entity (PC Configuration)
+ */
 @Entity
 @Table(name = "pcTypes")
 public class PcType {

@@ -9,14 +9,15 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface RoomMapper {
+    // Create Request: dto to entity
     @Mapping(target = "createdAt", expression = "java(java.time.LocalDateTime.now())") // set automatically
     Room toEntity(RoomRequestDto dto);
 
-    // Update: merge non-null fields
+    // Update: merge non-null fields of dto into existing entity
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateEntityFromDto(RoomRequestDto dto, @MappingTarget Room entity);
 
-    // Responses
+    // Responses: entity to response dto
     @Mapping(target = "facultyId", source = "faculty.id")
     RoomResponseDto toResponseDto(Room entity);
 

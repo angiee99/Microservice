@@ -46,16 +46,9 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(FKConflictException.class)
-    public ResponseEntity<?> handleDeleteBlocked(FKConflictException ex, WebRequest request) {
-        return ResponseEntity.badRequest().body(Map.of(
-                "timestamp", LocalDateTime.now(),
-                "status", HttpStatus.FORBIDDEN.value(),
-                "error", "Forbidden",
-                "message", ex.getMessage(),
-                "path", request.getDescription(false).replace("uri=", "")
-        ));
+    public ResponseEntity<?> handleDeleteBlocked(FKConflictException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
     }
-
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleGeneralException(
             Exception ex, WebRequest request) {

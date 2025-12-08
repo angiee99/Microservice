@@ -7,6 +7,9 @@ import java.sql.Time;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Faculty DB entity
+ */
 @Entity
 @Table(name = "faculties")
 public class Faculty {
@@ -27,17 +30,23 @@ public class Faculty {
     @JsonIgnore
     private List<Room> rooms;
 
+    /**
+     * Faculty constructor with main fields only. All the rest fields are filled with default values.
+     * @param name faculty name
+     * @param shortcut faculty shortcut
+     * @param email faculty email
+     */
     public Faculty(String name, String shortcut, String email) {
         this.name = name;
         this.shortcut = shortcut;
         this.email = email;
         // default params
-        this.createdAt = LocalDateTime.now();
         this.reservationTimeStart = Time.valueOf("08:00:00");
         this.reservationTimeEnd = Time.valueOf("20:00:00");
-        this.maxUserReservationCount = 9999;
-        this.maxUserReservationTime = 180;
-        this.maxUserReservationTimeWeekly = 900;
+        this.maxUserReservationCount = 9999; // unlimited basically
+        this.maxUserReservationTime = 180; // 3 hours for one reservation
+        this.maxUserReservationTimeWeekly = 900; //15 hours weekly limit
+        this.createdAt = LocalDateTime.now();
     }
 
     public Faculty(String name, String shortcut, String email, Time reservationTimeStart, Time reservationTimeEnd, Integer maxUserReservationCount, Integer maxUserReservationTime, Integer maxUserReservationTimeWeekly, LocalDateTime createdAt) {
