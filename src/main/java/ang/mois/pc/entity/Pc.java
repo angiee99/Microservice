@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 
+/**
+ * PC DB entity
+ */
 @Entity
 @Table(name = "pcs")
 public class Pc {

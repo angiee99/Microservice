@@ -6,6 +6,9 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Room DB entity
+ */
 @Entity
 @Table(name = "rooms")
 public class Room {

@@ -6,17 +6,20 @@ import ang.mois.pc.entity.Room;
 import org.mapstruct.*;
 
 import java.util.List;
-
+/**
+ * Mapper for transforming room entities to dtos and vise versa
+ */
 @Mapper(componentModel = "spring")
 public interface RoomMapper {
+    // Create Request: dto to entity
     @Mapping(target = "createdAt", expression = "java(java.time.LocalDateTime.now())") // set automatically
     Room toEntity(RoomRequestDto dto);
 
-    // Update: merge non-null fields
+    // Update: merge non-null fields of dto into existing entity
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateEntityFromDto(RoomRequestDto dto, @MappingTarget Room entity);
 
-    // Responses
+    // Responses: entity to response dto
     @Mapping(target = "facultyId", source = "faculty.id")
     RoomResponseDto toResponseDto(Room entity);
 

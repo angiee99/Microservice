@@ -5,6 +5,22 @@ import jakarta.validation.constraints.*;
 
 import java.sql.Time;
 
+/**
+ * DTO for faculty create/update requests
+ * <p> Validation rules are also defined here.
+ * Some are specific only for create operations are annotated with {@link ValidationGroups.OnCreate}.
+ * Others are default and are used in every case.
+ * </p>
+ *  All fields are mandatory on creation.
+ * @param name faculty name
+ * @param shortcut abbreviation
+ * @param email faculty email
+ * @param reservationTimeStart the time when the first reservation is possible
+ * @param reservationTimeEnd the time util when a reservation is possible
+ * @param maxUserReservationCount max reservation count overall
+ * @param maxUserReservationTime max time per one reservation in minutes
+ * @param maxUserReservationTimeWeekly max time for all reservations per week per user in minutes
+ */
 public record FacultyRequestDto(
 
         @NotBlank(groups = ValidationGroups.OnCreate.class, message = "Name is mandatory")

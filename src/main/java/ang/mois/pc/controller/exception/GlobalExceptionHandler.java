@@ -13,6 +13,9 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Handles exceptions by returning a corresponding http response
+ */
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -46,7 +49,6 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleDeleteBlocked(FKConflictException ex) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
     }
-
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleGeneralException(
             Exception ex, WebRequest request) {

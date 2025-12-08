@@ -13,7 +13,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-
+/**
+ * Service for Room operations
+ */
 @Service
 public class RoomService {
     private final RoomRepository roomRepository;
@@ -28,29 +30,59 @@ public class RoomService {
         this.roomMapper = roomMapper;
     }
 
+    /**
+     * Get all rooms without pagination.
+     * @return list of {@link RoomResponseDto}
+     */
     public List<RoomResponseDto> getAll() {
         return roomMapper.toResponseDtoList(roomRepository.findAll());
     }
 
+    /**
+     * Get all rooms with pagination support.
+     * @param pageable {@link Pageable} with page parameters
+     * @return a {@link Page} of {@link RoomResponseDto}
+     */
     public Page<RoomResponseDto> getAll(Pageable pageable) {
         Page<Room> roomPage = roomRepository.findAll(pageable);
         return roomPage.map(roomMapper::toResponseDto);
     }
 
+    /**
+     * Get a room by ID.
+     * @param id Room ID
+     * @return {@link RoomResponseDto}
+     */
     public RoomResponseDto getById(Long id) {
         Room room = getRoom(id);
         return roomMapper.toResponseDto(room);
     }
 
+    /**
+     * Get all rooms for a specific faculty without pagination.
+     * @param facultyId Faculty ID
+     * @return list of {@link RoomResponseDto} associated with the faculty
+     */
     public List<RoomResponseDto> getByFaculty(Long facultyId) {
         return roomMapper.toResponseDtoList(roomRepository.findByFacultyId(facultyId));
     }
 
+    /**
+     * Get all rooms for a specific faculty with pagination support.
+     * @param facultyId Faculty ID
+     * @param pageable {@link Pageable} with page parameters
+     * @return a {@link Page} of {@link RoomResponseDto} with the faculty
+     */
     public Page<RoomResponseDto> getByFaculty(Long facultyId, Pageable pageable) {
         Page<Room> roomPage = roomRepository.findByFacultyId(facultyId, pageable);
         return roomPage.map(roomMapper::toResponseDto);
     }
 
+    /**
+     * Create a new room
+     * @param createRoomRequestDto request DTO with room parameters
+     * @return saved {@link RoomResponseDto}
+     */
     public RoomResponseDto save(RoomRequestDto createRoomRequestDto) {
         Faculty faculty = getFaculty(createRoomRequestDto.facultyId());
 
@@ -60,6 +92,12 @@ public class RoomService {
         return roomMapper.toResponseDto(roomRepository.save(room));
     }
 
+    /**
+     * Delete a room by ID.
+     * Checks that no PCs reference this room before deletion.
+     * @param id Room ID
+     * @throws FKConflictException if there are PCs still associated with the room
+     */
     public void delete(Long id) {
         // verify if room exists
         if(!roomRepository.existsById(id)) {
@@ -76,6 +114,12 @@ public class RoomService {
         roomRepository.deleteById(id);
     }
 
+    /**
+     * Update an existing room.
+     * @param idR Room ID
+     * @param roomRequestDto request DTO with updated room parameters
+     * @return updated {@link RoomResponseDto}
+     */
     public RoomResponseDto update(Long idR, RoomRequestDto roomRequestDto) {
         Room room = getRoom(idR);
 

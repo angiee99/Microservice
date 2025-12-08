@@ -13,9 +13,13 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 
+/**
+ * Controller for computer configuration (PC type) CRUD operations
+ */
 @RestController
 @RequestMapping("/computerConfig")
 public class PcTypeController {
+
     private final PcTypeService pcTypeService;
 
     @Autowired
@@ -23,31 +27,64 @@ public class PcTypeController {
         this.pcTypeService = pcTypeService;
     }
 
+    /**
+     * Get all computer configurations
+     * @param pageable {@link Pageable} with page params
+     * @return a {@link Page} of computer configurations {@link PcTypeResponseDto}
+     */
     @GetMapping
     public ResponseEntity<Page<PcTypeResponseDto>> getAll(Pageable pageable) {
         return ResponseEntity.ok(pcTypeService.getAll(pageable));
     }
 
+    /**
+     * Get one computer configuration
+     * @param id computer configuration id
+     * @return {@link PcTypeResponseDto}
+     */
     @GetMapping("/{id}")
     public ResponseEntity<PcTypeResponseDto> getType(@PathVariable Long id) {
         return ResponseEntity.ok(pcTypeService.getById(id));
     }
 
+    /**
+     * Add new computer configuration
+     * @param type request dto with computer configuration parameters
+     * @return new {@link PcTypeResponseDto}
+     */
     @PostMapping
-    public ResponseEntity<PcTypeResponseDto> addType(@Validated(ValidationGroups.OnCreateSequence.class) @RequestBody PcTypeRequestDto type) {
+    public ResponseEntity<PcTypeResponseDto> addType(
+            @Validated(ValidationGroups.OnCreateSequence.class)
+            @RequestBody PcTypeRequestDto type
+    ) {
         PcTypeResponseDto saved = pcTypeService.save(type);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
+    /**
+     * Delete computer configuration
+     * @param id computer configuration id
+     * @return empty response with status 204
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteType(@PathVariable Long id) {
         pcTypeService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
+    /**
+     * Update computer configuration
+     * @param id computer configuration id
+     * @param pcType {@link PcTypeRequestDto} with computer configuration parameters to update
+     * @return updated {@link PcTypeResponseDto}
+     */
     @PutMapping("/{id}")
-    public ResponseEntity<PcTypeResponseDto> updatePcType(@PathVariable Long id, @Validated @RequestBody PcTypeRequestDto pcType) {
+    public ResponseEntity<PcTypeResponseDto> updatePcType(
+            @PathVariable Long id,
+            @Validated @RequestBody PcTypeRequestDto pcType
+    ) {
         PcTypeResponseDto updated = pcTypeService.update(id, pcType);
         return ResponseEntity.ok(updated);
     }
 }
+
