@@ -10,9 +10,9 @@ import ang.mois.pc.repository.FacultyRepository;
 import ang.mois.pc.repository.PcRepository;
 import ang.mois.pc.repository.RoomRepository;
 import ang.mois.pc.repository.PcTypeRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
@@ -195,12 +194,12 @@ class PcServiceTest {
 
     @Test
     void deletePcDoesNotExist() {
-        assertThrows(IllegalArgumentException.class, () -> pcService.delete(192390820L));
+        assertThrows(EntityNotFoundException.class, () -> pcService.delete(192390820L));
     }
 
     @Test
     void getById_nonexistent_shouldThrow() {
-        assertThrows(IllegalArgumentException.class, () -> pcService.getById(9999L));
+        assertThrows(EntityNotFoundException.class, () -> pcService.getById(9999L));
     }
 
     @Test
@@ -211,7 +210,7 @@ class PcServiceTest {
                 9999L, // nonexistent room
                 savedType.getId()
         );
-        assertThrows(IllegalArgumentException.class, () -> pcService.save(dto));
+        assertThrows(EntityNotFoundException.class, () -> pcService.save(dto));
     }
 
     @Test
@@ -222,6 +221,6 @@ class PcServiceTest {
                 savedRoom.getId(),
                 9999L // nonexistent type
         );
-        assertThrows(IllegalArgumentException.class, () -> pcService.save(dto));
+        assertThrows(EntityNotFoundException.class, () -> pcService.save(dto));
     }
 }

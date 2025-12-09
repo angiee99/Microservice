@@ -5,6 +5,7 @@ import ang.mois.pc.util.TestDataProvider;
 import ang.mois.pc.dto.request.RoomRequestDto;
 import ang.mois.pc.dto.response.FacultyResponseDto;
 import ang.mois.pc.dto.response.RoomResponseDto;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,7 +89,7 @@ class RoomServiceTest {
         Long id = saved.id();
         roomService.delete(id);
 
-        Exception ex = assertThrows(IllegalArgumentException.class, () -> roomService.getById(id));
+        Exception ex = assertThrows(EntityNotFoundException.class, () -> roomService.getById(id));
         assertTrue(ex.getMessage().contains("does not exist"));
     }
 

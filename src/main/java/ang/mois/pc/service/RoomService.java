@@ -5,9 +5,9 @@ import ang.mois.pc.dto.response.RoomResponseDto;
 import ang.mois.pc.entity.Faculty;
 import ang.mois.pc.entity.Room;
 import ang.mois.pc.mapper.RoomMapper;
-import ang.mois.pc.repository.FacultyRepository;
 import ang.mois.pc.repository.PcRepository;
 import ang.mois.pc.repository.RoomRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -19,15 +19,15 @@ import java.util.List;
 @Service
 public class RoomService {
     private final RoomRepository roomRepository;
-    private final FacultyRepository facultyRepository;
     private final PcRepository pcRepository;
     private final RoomMapper roomMapper;
+    private final ServiceHelper serviceHelper;
 
-    public RoomService(RoomRepository roomRepository, FacultyRepository facultyRepository, PcRepository pcRepository, RoomMapper roomMapper) {
+    public RoomService(RoomRepository roomRepository, PcRepository pcRepository, RoomMapper roomMapper, ServiceHelper serviceHelper) {
         this.roomRepository = roomRepository;
-        this.facultyRepository = facultyRepository;
         this.pcRepository = pcRepository;
         this.roomMapper = roomMapper;
+        this.serviceHelper = serviceHelper;
     }
 
     /**
@@ -54,7 +54,7 @@ public class RoomService {
      * @return {@link RoomResponseDto}
      */
     public RoomResponseDto getById(Long id) {
-        Room room = getRoom(id);
+        Room room = serviceHelper.getRoom(id);
         return roomMapper.toResponseDto(room);
     }
 
@@ -84,7 +84,7 @@ public class RoomService {
      * @return saved {@link RoomResponseDto}
      */
     public RoomResponseDto save(RoomRequestDto createRoomRequestDto) {
-        Faculty faculty = getFaculty(createRoomRequestDto.facultyId());
+        Faculty faculty = serviceHelper.getFaculty(createRoomRequestDto.facultyId());
 
         Room room = roomMapper.toEntity(createRoomRequestDto);
         room.setFaculty(faculty);
@@ -101,7 +101,7 @@ public class RoomService {
     public void delete(Long id) {
         // verify if room exists
         if(!roomRepository.existsById(id)) {
-            throw new IllegalArgumentException("Room with id " + id + " does not exist");
+            throw new EntityNotFoundException("Room with id " + id + " does not exist");
         }
 
         if(pcRepository.existsByRoomId(id)) {
@@ -121,10 +121,10 @@ public class RoomService {
      * @return updated {@link RoomResponseDto}
      */
     public RoomResponseDto update(Long idR, RoomRequestDto roomRequestDto) {
-        Room room = getRoom(idR);
+        Room room = serviceHelper.getRoom(idR);
 
         if(roomRequestDto.facultyId() != null) {
-            Faculty faculty = getFaculty(roomRequestDto.facultyId());
+            Faculty faculty = serviceHelper.getFaculty(roomRequestDto.facultyId());
             room.setFaculty(faculty);
         }
 
@@ -134,13 +134,4 @@ public class RoomService {
         return roomMapper.toResponseDto(roomRepository.save(room));
     }
 
-    private Room getRoom(Long id) {
-         return roomRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Room with id " + id + " does not exist"));
-    }
-
-    private Faculty getFaculty(Long facultyId) {
-        return facultyRepository.findById(facultyId).orElseThrow(
-                ()-> new IllegalArgumentException("Faculty with id " + facultyId + " does not exist"));
-    }
 }

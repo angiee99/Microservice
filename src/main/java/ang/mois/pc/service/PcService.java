@@ -9,33 +9,29 @@ import ang.mois.pc.entity.PcType;
 import ang.mois.pc.entity.Room;
 import ang.mois.pc.mapper.PcMapper;
 import ang.mois.pc.repository.PcRepository;
-import ang.mois.pc.repository.PcTypeRepository;
-import ang.mois.pc.repository.RoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
+
 /**
  * Service for PC operations
  */
 @Service
 public class PcService {
     private final PcRepository pcRepository;
-    private final RoomRepository roomRepository;
-    private final PcTypeRepository pcTypeRepository;
     private final PcMapper pcMapper;
     private final ReservationsClient reservationsClient;
+    private final ServiceHelper serviceHelper;
 
     @Autowired
-    public PcService(PcRepository pcRepository, RoomRepository roomRepository, PcTypeRepository pcTypeRepository, PcMapper pcMapper, ReservationsClient reservationsClient) {
+    public PcService(PcRepository pcRepository, PcMapper pcMapper, ReservationsClient reservationsClient, ServiceHelper serviceHelper) {
         this.pcRepository = pcRepository;
-        this.roomRepository = roomRepository;
-        this.pcTypeRepository = pcTypeRepository;
         this.pcMapper = pcMapper;
         this.reservationsClient = reservationsClient;
+        this.serviceHelper = serviceHelper;
     }
 
     /**
@@ -82,7 +78,7 @@ public class PcService {
      * @return {@link PcResponseDto}
      */
     public PcResponseDto getById(Long id) {
-        Pc pc = getPc(id);
+        Pc pc = serviceHelper.getPc(id);
         return pcMapper.toResponseDto(pc);
     }
 
@@ -92,7 +88,7 @@ public class PcService {
      * @return {@link PcUnwrappedResponseDto}
      */
     public PcUnwrappedResponseDto getByIdUnwrapped(Long id) {
-        Pc pc = getPc(id);
+        Pc pc = serviceHelper.getPc(id);
         return pcMapper.toUnwrappedResponseDto(pc);
     }
 
@@ -103,8 +99,8 @@ public class PcService {
      */
     public PcResponseDto save(PcRequestDto pcRequestDto) {
         // retrieve foreign key entities and verify relation
-        Room room = getRoom(pcRequestDto.computerRoomId());
-        PcType type = getType(pcRequestDto.configId());
+        Room room = serviceHelper.getRoom(pcRequestDto.computerRoomId());
+        PcType type = serviceHelper.getType(pcRequestDto.configId());
 
         // map basic properties
         Pc pc = pcMapper.toEntity(pcRequestDto);
@@ -123,15 +119,15 @@ public class PcService {
      * @return updated {@link PcResponseDto}
      */
     public PcResponseDto update(Long id, PcRequestDto updatePcRequestDto) {
-        Pc pc = getPc(id);
+        Pc pc = serviceHelper.getPc(id);
         // verify foreign key relations
         if(updatePcRequestDto.computerRoomId() != null) {
-            Room room = getRoom(updatePcRequestDto.computerRoomId());
+            Room room = serviceHelper.getRoom(updatePcRequestDto.computerRoomId());
             pc.setRoom(room);
         }
 
         if(updatePcRequestDto.configId() != null) {
-            PcType type = getType(updatePcRequestDto.configId());
+            PcType type = serviceHelper.getType(updatePcRequestDto.configId());
             pc.setPcType(type);
         }
         // merge entities
@@ -140,29 +136,13 @@ public class PcService {
         return pcMapper.toResponseDto(pcRepository.save(pc));
     }
 
-    private Room getRoom(Long roomId) {
-        Optional<Room> room = roomRepository.findById(roomId);
-        if(room.isEmpty()){
-            throw new IllegalArgumentException("Room with id " + roomId + " does not exist");
-        }
-        return room.get();
-    }
-
-    private PcType getType(Long typeId) {
-        Optional<PcType> type = pcTypeRepository.findById(typeId);
-        if(type.isEmpty()){
-            throw new IllegalArgumentException("PcType with id " + typeId + " does not exist");
-        }
-        return type.get();
-    }
-
     /**
      * Delete a PC
      * @param id PC ID
      * @throws FKConflictException if there are active reservations for the PC
      */
     public void delete(Long id) {
-        Pc pc = getPc(id);
+        Pc pc = serviceHelper.getPc(id);
 
         // Check reservations via another microservice
         boolean hasReservations = reservationsClient.hasReservationsForPc(pc.getId());
@@ -182,10 +162,5 @@ public class PcService {
      */
     public List<PcResponseDto> getByType(PcType type) {
         return pcMapper.toResponseDtoList(pcRepository.findByPcType(type));
-    }
-
-    private Pc getPc(Long id) {
-        return pcRepository.findById(id)
-                .orElseThrow(() ->new IllegalArgumentException("Pc with id " + id + " does not exist"));
     }
 }

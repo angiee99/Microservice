@@ -1,6 +1,7 @@
 package ang.mois.pc.controller.exception;
 
 import ang.mois.pc.service.FKConflictException;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -40,6 +41,19 @@ public class GlobalExceptionHandler {
                 "timestamp", LocalDateTime.now(),
                 "status", HttpStatus.BAD_REQUEST.value(),
                 "error", "Bad Request",
+                "message", ex.getMessage(),
+                "path", request.getDescription(false).replace("uri=", "")
+        ));
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleEntityNotFoundException(
+            EntityNotFoundException ex, WebRequest request) {
+
+        return ResponseEntity.badRequest().body(Map.of(
+                "timestamp", LocalDateTime.now(),
+                "status", HttpStatus.NOT_FOUND.value(),
+                "error", "Not Found",
                 "message", ex.getMessage(),
                 "path", request.getDescription(false).replace("uri=", "")
         ));
