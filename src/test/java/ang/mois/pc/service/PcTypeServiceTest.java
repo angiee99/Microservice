@@ -3,6 +3,7 @@ package ang.mois.pc.service;
 import ang.mois.pc.util.TestDataProvider;
 import ang.mois.pc.dto.request.PcTypeRequestDto;
 import ang.mois.pc.dto.response.PcTypeResponseDto;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,7 +76,7 @@ class PcTypeServiceTest {
 
         pcTypeService.delete(id);
 
-        Exception ex = assertThrows(IllegalArgumentException.class, () -> pcTypeService.getById(id));
+        Exception ex = assertThrows(EntityNotFoundException.class, () -> pcTypeService.getById(id));
         assertTrue(ex.getMessage().contains("does not exist"));
     }
 
