@@ -6,6 +6,7 @@ import ang.mois.pc.entity.Faculty;
 import ang.mois.pc.mapper.FacultyMapper;
 import ang.mois.pc.repository.FacultyRepository;
 import ang.mois.pc.repository.RoomRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -20,11 +21,13 @@ public class FacultyService {
     private final FacultyRepository facultyRepository;
     private final RoomRepository roomRepository;
     private final FacultyMapper facultyMapper;
+    private final ServiceHelper serviceHelper;
 
-    public FacultyService(FacultyRepository facultyRepository, RoomRepository roomRepository, FacultyMapper facultyMapper) {
+    public FacultyService(FacultyRepository facultyRepository, RoomRepository roomRepository, FacultyMapper facultyMapper, ServiceHelper serviceHelper) {
         this.facultyRepository = facultyRepository;
         this.roomRepository = roomRepository;
         this.facultyMapper = facultyMapper;
+        this.serviceHelper = serviceHelper;
     }
 
     /**
@@ -33,7 +36,7 @@ public class FacultyService {
      * @return {@link FacultyResponseDto}
      */
     public FacultyResponseDto getById(Long id) {
-       Faculty faculty = getFaculty(id);
+       Faculty faculty = serviceHelper.getFaculty(id);
        return facultyMapper.toResponseDto(faculty);
     }
 
@@ -72,7 +75,7 @@ public class FacultyService {
     public void delete(Long id) {
         // check if faculty even exists
         if (!facultyRepository.existsById(id)) {
-            throw new IllegalArgumentException("Faculty not found: " + id);
+            throw new EntityNotFoundException("Faculty not found: " + id);
         }
 
         // delete only if no room references this faculty as an FK
@@ -92,20 +95,11 @@ public class FacultyService {
      * @return updated {@link FacultyResponseDto}
      */
     public FacultyResponseDto update(Long id, FacultyRequestDto facultyRequestDto) {
-        Faculty faculty = getFaculty(id);
+        Faculty faculty = serviceHelper.getFaculty(id);
 
         // merge entities - basically copy non-null values to existing faculty
         facultyMapper.updateEntityFromDto(facultyRequestDto, faculty);
 
         return facultyMapper.toResponseDto(facultyRepository.save(faculty));
-    }
-    /**
-     * Get faculty by id
-     * @param id faculty id
-     * @return {@link Faculty} entity if successful
-     */
-    private Faculty getFaculty(Long id) {
-        return facultyRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Faculty with id " + id + " does not exist"));
     }
 }

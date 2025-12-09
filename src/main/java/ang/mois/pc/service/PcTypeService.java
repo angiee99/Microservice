@@ -6,6 +6,7 @@ import ang.mois.pc.entity.PcType;
 import ang.mois.pc.mapper.PcTypeMapper;
 import ang.mois.pc.repository.PcRepository;
 import ang.mois.pc.repository.PcTypeRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -19,11 +20,13 @@ public class PcTypeService {
     private final PcTypeRepository pcTypeRepository;
     private final PcRepository pcRepository;
     private final PcTypeMapper pcTypeMapper;
+    private final ServiceHelper serviceHelper;
 
-    public PcTypeService(PcTypeRepository pcTypeRepository, PcRepository pcRepository, PcTypeMapper pcTypeMapper) {
+    public PcTypeService(PcTypeRepository pcTypeRepository, PcRepository pcRepository, PcTypeMapper pcTypeMapper, ServiceHelper serviceHelper) {
         this.pcTypeRepository = pcTypeRepository;
         this.pcRepository = pcRepository;
         this.pcTypeMapper = pcTypeMapper;
+        this.serviceHelper = serviceHelper;
     }
 
     /**
@@ -50,7 +53,7 @@ public class PcTypeService {
      * @return {@link PcTypeResponseDto}
      */
     public PcTypeResponseDto getById(Long typeId) {
-        PcType type = getPcType(typeId);
+        PcType type = serviceHelper.getType(typeId);
         return pcTypeMapper.toResponseDto(type);
     }
 
@@ -73,7 +76,7 @@ public class PcTypeService {
     public void delete(Long typeId) {
         // check if type exists
         if(!pcTypeRepository.existsById(typeId)) {
-            throw new IllegalArgumentException("Configuration with id " + typeId + " does not exist");
+            throw new EntityNotFoundException("Configuration with id " + typeId + " does not exist");
         }
 
         // delete if no computer references this type
@@ -92,7 +95,7 @@ public class PcTypeService {
      * @return updated {@link PcTypeResponseDto}
      */
     public PcTypeResponseDto update(Long id, PcTypeRequestDto pcTypeDto) {
-        PcType pcTypeEntity = getPcType(id);
+        PcType pcTypeEntity = serviceHelper.getType(id);
 
         // map by copying non-null values from update dto
         pcTypeMapper.updateEntityFromDto(pcTypeDto, pcTypeEntity);
@@ -100,8 +103,4 @@ public class PcTypeService {
         return pcTypeMapper.toResponseDto(pcTypeRepository.save(pcTypeEntity));
     }
 
-    private PcType getPcType(Long id) {
-        return pcTypeRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Configuration with id " + id + " does not exist"));
-    }
 }
