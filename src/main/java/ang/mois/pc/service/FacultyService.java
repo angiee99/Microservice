@@ -12,6 +12,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Service for faculty operations
+ */
 @Service
 public class FacultyService {
     private final FacultyRepository facultyRepository;
@@ -24,25 +27,48 @@ public class FacultyService {
         this.facultyMapper = facultyMapper;
     }
 
+    /**
+     * Get faculty by id
+     * @param id faculty id
+     * @return {@link FacultyResponseDto}
+     */
     public FacultyResponseDto getById(Long id) {
        Faculty faculty = getFaculty(id);
        return facultyMapper.toResponseDto(faculty);
     }
 
+    /**
+     * Get all faculties without pagination
+     * @return list of {@link FacultyResponseDto}
+     */
     public List<FacultyResponseDto> getAll() {
         return facultyMapper.toResponseDtoList(facultyRepository.findAll());
     }
 
+    /**
+     * Get all faculties with pagination
+     * @param pageable {@link Pageable} with page params
+     * @return a {@link Page} of faculty response dtos
+     */
     public Page<FacultyResponseDto> getAll(Pageable pageable) {
         Page<Faculty> facultyPage = facultyRepository.findAll(pageable);
         return facultyPage.map(facultyMapper::toResponseDto);
     }
 
+    /**
+     * Create and save a new faculty
+     * @param facultyRequestDto request dto with faculty parameters
+     * @return saved {@link FacultyResponseDto}
+     */
     public FacultyResponseDto save(FacultyRequestDto facultyRequestDto) {
         Faculty faculty = facultyMapper.toEntity(facultyRequestDto);
         return facultyMapper.toResponseDto(facultyRepository.save(faculty));
     }
 
+    /**
+     * Delete faculty by id with validation checks
+     * @param id faculty id
+     */
     public void delete(Long id) {
         // check if faculty even exists
         if (!facultyRepository.existsById(id)) {
@@ -55,10 +81,16 @@ public class FacultyService {
                     "Cannot delete faculty with id:  " + id +", because there are still rooms associated with it."
             );
         }
-
+        // actual delete
         facultyRepository.deleteById(id);
     }
 
+    /**
+     * Update existing faculty
+     * @param id faculty id
+     * @param facultyRequestDto request dto with faculty parameters to update
+     * @return updated {@link FacultyResponseDto}
+     */
     public FacultyResponseDto update(Long id, FacultyRequestDto facultyRequestDto) {
         Faculty faculty = getFaculty(id);
 
@@ -67,7 +99,11 @@ public class FacultyService {
 
         return facultyMapper.toResponseDto(facultyRepository.save(faculty));
     }
-
+    /**
+     * Get faculty by id
+     * @param id faculty id
+     * @return {@link Faculty} entity if successful
+     */
     private Faculty getFaculty(Long id) {
         return facultyRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Faculty with id " + id + " does not exist"));

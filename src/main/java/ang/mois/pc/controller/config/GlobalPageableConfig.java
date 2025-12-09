@@ -6,6 +6,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.config.PageableHandlerMethodArgumentResolverCustomizer;
 
+/**
+ * Defines global configuration for the responses that use pagination
+ */
 @Configuration
 public class GlobalPageableConfig {
     private static final int DEFAULT_PAGE_NUMBER = 0;

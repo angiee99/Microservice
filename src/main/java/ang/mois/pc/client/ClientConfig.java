@@ -6,6 +6,10 @@ import org.springframework.web.client.RestTemplate;
 
 @Configuration
 public class ClientConfig {
+    /**
+     * provides a {@link RestTemplate} for communication with microservices
+     * @return rest template
+     */
     @Bean
     public RestTemplate restTemplate() {
         return new RestTemplate();
